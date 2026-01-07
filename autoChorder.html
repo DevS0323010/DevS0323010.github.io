@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>AutoChorder</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            background-color: #f8f9fa
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin: 1rem;
+            font-size: 2.25rem;
+            font-weight: 600
+        }
+
+        h2 {
+            color: #2c3e50;
+            text-align: center;
+            margin: 1.5rem 0 .5rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+            border-bottom: 1px solid #eaeaea;
+            padding-bottom: .25rem
+        }
+
+        h3 {
+            color: #2c3e50;
+            margin: 0 0 .5rem;
+            font-size: 1.25rem
+        }
+
+        i {
+            color: #888
+        }
+
+        ul {
+            list-style-type: none;
+            padding-left: 0
+        }
+
+        li {
+            padding: .2rem 0;
+            border-bottom: 1px solid #eaeaea
+        }
+
+        li:last-child {
+            border-bottom: none
+        }
+
+        li>ul {
+            padding-left: 1.5rem;
+            margin-top: .25rem
+        }
+
+        li>ul>li {
+            padding-left: .25rem
+        }
+
+        .input {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 1rem;
+            margin: 1rem 0
+        }
+
+        .input label {
+            display: block;
+            margin-bottom: .5rem;
+            font-weight: 500;
+            color: #2c3e50
+        }
+
+        .input input,
+        .input select {
+            width: 100%;
+            padding: .75rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color .2s
+        }
+
+        .input input:focus,
+        .input select:focus {
+            outline: 0;
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 2px rgba(74, 144, 226, .2)
+        }
+
+        .input input::placeholder {
+            color: #999
+        }
+
+        div {
+            margin-bottom: 1.5rem
+        }
+
+        #scaleOutput {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, .08)
+        }
+
+        #chordList {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, .08);
+            margin-bottom: 1rem
+        }
+
+        #chordList table {
+            width: 100%;
+            border-collapse: collapse
+        }
+
+        #chordList th {
+            padding: .2rem 1rem;
+            text-align: left;
+            background-color: #f8f9fa;
+            font-weight: 600;
+            border-bottom: 2px solid #eaeaea
+        }
+
+        #chordList td {
+            padding: .2rem 1rem;
+            border-bottom: 1px solid #eaeaea
+        }
+
+        #chordList tr:hover {
+            background-color: #f5f7fa
+        }
+
+        #chordList tr:nth-child(even) {
+            background-color: #f8f9fa
+        }
+
+        #chordList tr:last-child td {
+            border-bottom: none
+        }
+
+        #chordList tr:hover td {
+            background-color: #e9f2f9
+        }
+
+        #chordList tr:hover th {
+            background-color: #e9f2f9
+        }
+
+        #chordList tr:nth-child(even) th {
+            background-color: #f8f9fa
+        }
+
+        #analysis {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, .08);
+            margin-top: 1rem
+        }
+
+        #analysis h2 {
+            color: #2c3e50;
+            margin-top: .5rem
+        }
+
+        #analysis ul {
+            padding-left: 1.5rem
+        }
+
+        #analysis li {
+            margin-bottom: .5rem;
+            padding-left: .5rem
+        }
+
+        #analysis li>ul {
+            padding-left: 1.5rem
+        }
+
+        #analysis li>ul>li {
+            margin-bottom: .25rem
+        }
+
+        #analysis li>ul>li:last-child {
+            margin-bottom: 0
+        }
+
+        #analysis li>ul>li>ul {
+            padding-left: 1.5rem
+        }
+
+        #analysis li>ul>li>ul>li {
+            margin-bottom: .1rem
+        }
+
+        #analysis li>ul>li>ul>li:last-child {
+            margin-bottom: 0
+        }
+
+        footer {
+            text-align: center;
+            color: #777;
+            font-size: .875rem;
+            margin: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee
+        }
+
+        footer a {
+            color: #4a90e2;
+            text-decoration: none
+        }
+
+        footer a:hover {
+            text-decoration: underline
+        }
+
+        @media (max-width:768px) {
+            #chordList table {
+                font-size: .875rem
+            }
+        }
+
+        @media (max-width:480px) {
+            #chordList table {
+                font-size: .8rem
+            }
+        }
+
+        @media (max-width:320px) {
+            #chordList table {
+                font-size: .75rem
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>AutoChorder</h1>
+    <h2>Scale</h2>
+    <div class="input"><label for="scaleSelect">Select:</label> <select id="scaleSelect"
+            oninput="enterScale()"></select> <label for="scaleInput">Input:</label> <input type="text" id="scaleInput"
+            placeholder="Enter a scale... (e.g. 0 5 10 13 18 23 28)" oninput="customScale()" autocomplete="off"> <label
+            for="root">Root:</label><select id="root" oninput="generateChords()"></select></div>
+    <div id="scaleOutput">
+        <h3>Scale notes:</h3><i>Your scale information will go here...</i>
+    </div>
+    <h2>Chords</h2>
+    <div id="chordList"><i>Your chord output will go here...</i></div>
+    <h2>Analysis</h2>
+    <div id="analysis"><i>Click a chord to see its analysis...</i></div>
+    <footer>Algorithm made by S0323010, inspiration from <a href="https://www.31edo.com/">Alex Racz</a>, <a
+            href="https://lamplight0.sakura.ne.jp/a/">LΛMPLIGHT</a>, and <a
+            href="https://github.com/lkorr/xen-functional-harmony/tree/main">lkorr</a>.</footer>
+    <script>
+            function stringToNumbers(n) {
+        return n.trim().split(" ").map(Number)
+    }
+
+    function numbersToString(n) {
+        return n.map(String).join(" ")
+    }
+
+    function mod31(t) {
+        let i = [];
+        for (let e = 0; e < t.length; e++) {
+            let n = t[e] % 31;
+            if (isNaN(t[e])) throw new Error("Invalid input: " + t);
+            n < 0 && (n += 31), i.includes(n) || i.push(n)
+        }
+        return i.sort((n, e) => n - e), i
+    }
+
+    function addNotes() {
+        let i = document.getElementById("root"),
+            n = document.getElementById("scaleSelect");
+        for (let t = 0; t < noteNames.length; t++) {
+            let n = `${noteNames[t]} (${t}\\31)`,
+                e = document.createElement("option");
+            e.textContent = n, e.value = t, i.appendChild(e)
+        }
+        let t = '<optgroup label="Custom"><option value="-1">Custom</option>';
+        for (let e = 0; e < scales.length; e++) {
+            let n = "" + scales[e][0];
+            0 == scales[e][1].length ? t += `</optgroup><optgroup label="${n}">` : t += `<option value="${e}"> ${n}</option>`
+        }
+        t += '</optgroup">', n.innerHTML = t
+    }
+
+    function classifyChord(n) {
+        const e = mod31(n),
+            t = {
+                17: 0,
+                18: 0,
+                19: 0,
+                25: 0,
+                26: 0,
+                27: 0,
+                28: 0,
+                29: 0
+            },
+            i = {
+                27: 0,
+                28: 0,
+                29: 0
+            },
+            o = {
+                17: 0,
+                18: 0,
+                19: 0,
+                20: 18,
+                21: 18,
+                22: 18,
+                25: 0,
+                26: 0,
+                27: 0,
+                28: 0,
+                29: 0
+            },
+            s = [1, 2, 3, 15, 16, 30],
+            l = [4, 5, 6, 12, 13, 14];
+        let a = !1,
+            r = !1,
+            u = !1,
+            m = !1,
+            c = !1,
+            d = e.includes(18);
+        for (let n = 0; n < e.length; n++) {
+            const h = e[n];
+            h in i && !e.includes(i[h]) && (a = !0), h in t && !e.includes(t[h]) && (r = !0), h in o && !e.includes(o[h]) && (u = !0), s.includes(h) && (m = !0), l.includes(h) && (c = !0), e.includes((h + 18) % 31) && (d = !1)
+        }
+        return a && c ? "Dominant (Strong)" : r && c || a && d ? "Dominant" : !r && c ? "Subdominant" : c || !u && !m ? "Tonic" : "Mediant"
+    }
+
+    function enterScale() {
+        0 <= document.getElementById("scaleSelect").value && (document.getElementById("scaleInput").value = scales[document.getElementById("scaleSelect").value][1].join(" "), generateChords())
+    }
+
+    function customScale() {
+        document.getElementById("scaleSelect").value = -1, generateChords()
+    }
+
+    function generateChords() {
+        document.getElementById("analysis").innerHTML = "<i>Click a chord to see its analysis...</i>";
+        try {
+            const e = document.getElementById("scaleInput").value,
+                o = mod31(stringToNumbers(e)),
+                a = Number(document.getElementById("root").value);
+            if ("" == e.trim()) document.getElementById("chordList").innerHTML = "<i>Your chord output will go here...</i>", document.getElementById("scaleOutput").innerHTML = "<h3>Scale notes:</h3><i>Your scale information will go here...</i>";
+            else {
+                let e = "",
+                    t = "";
+                for (let n = 0; n < o.length; n++) {
+                    const s = o[n];
+                    e += (n ? ", " : "") + noteNames[(s + a) % 31], t += (n ? ", " : "") + noteIntervals[s]
+                }
+                document.getElementById("scaleOutput").innerHTML = `<h3>Scale notes:</h3><ul><li>Note names: ${e}</li><li>Interval names: ${t}</li></ul>`;
+                let i = [];
+                for (let n = 0; n < o.length; n++) {
+                    const r = o[n];
+                    for (let n = 0; n < chords.length; n++) {
+                        const u = chords[n];
+                        let e = [],
+                            t = !0;
+                        for (let n = 0; n < u[1].length; n++) {
+                            if (!o.includes((r + u[1][n]) % 31)) {
+                                t = !1;
+                                break
+                            }
+                            e.push(r + u[1][n])
+                        }
+                        t && i.push([noteNames[(a + r) % 31] + " " + u[0], e, u[2]])
+                    }
+                }
+                let l = {
+                    Tonic: [],
+                    Subdominant: [],
+                    Dominant: [],
+                    Mediant: []
+                };
+                if (0 == i.length) document.getElementById("chordList").innerHTML = "<i>No chords found in this scale.</i>";
+                else {
+                    for (let n = 0; n < i.length; n++) {
+                        const d = classifyChord(i[n][1]),
+                            h = [...i[n], d];
+                        l["Dominant (Strong)" == d ? "Dominant" : d].push(h)
+                    }
+                    for (var n in l) Object.prototype.hasOwnProperty.call(l, n) && l[n].sort((n, e) => e[2] - n[2]);
+                    const m = ["Tonic", "Subdominant", "Dominant", "Mediant"],
+                        c = [7, 4, 4, 4];
+                    let o = '<table><tr><th>Chord Name</th><th colspan="2">Chord Notes<th>Chord Type</th></tr>',
+                        s = 0;
+                    for (let i = 0; i < m.length; i++) {
+                        const M = l[m[i]];
+                        for (let n = 0; n < M.length; n++) n < 10 && (s = M[n][2]);
+                        const g = M.slice().sort((n, e) => e[3] != n[3] ? e[3] > n[3] ? 1 : -1 : e[2] - n[2]);
+                        for (let n = 0; n < g.length; n++) {
+                            const S = g[n];
+                            let e = "",
+                                t = "";
+                            for (let n = 0; n < S[1].length; n++) {
+                                const $ = S[1][n];
+                                e += (0 < n ? ", " : "") + noteNames[($ + a) % 31], t += (0 < n ? ", " : "") + $ % 31
+                            }
+                            S[2] < c[i] - 3 || s <= S[2] && (o += `<tr onclick='analyze(${JSON.stringify(S)})'>`, S[2] < c[i] ? o += `<td><i>${S[0]}</i></td><td><i>${e}</i></td><td><i>${t}</i></td><td><i>${S[3]}</i></td></tr>` : o += `<td>${S[0]}</td><td>${e}</td><td>${t}</td><td>${S[3]}</td></tr>`)
+                        }
+                    }
+                    o += "</table>", document.getElementById("chordList").innerHTML = o
+                }
+            }
+        } catch (n) {
+            document.getElementById("chordList").innerHTML = "<i>Please enter a valid scale.</i>"
+        }
+    }
+
+    function getExtensions(e, t, i, o, s, l, a, r) {
+        let u = [],
+            m, c;
+        for (let n = o; n <= s; n++)
+            if (t.includes(n % 31) && !e.includes(n % 31) && !i.includes(n % 31)) {
+                i.push(n % 31), m = m || n, c = n;
+                const d = [...e, n],
+                    h = classifyChord(d);
+                u.push([r[n - e[0]], d, h, n < l || n > a])
+            }
+        return {
+            extensions: u,
+            low: m,
+            high: c
+        }
+    }
+
+    function outputExtensions(a, r, u, n, m, c, d) {
+        let h = "";
+        if (0 < m.length) {
+            h += `<li>${n}: <ul>`;
+            for (let l = 0; l < m.length; l++) {
+                const M = m[l];
+                let e = "",
+                    t = "",
+                    i = "";
+                for (let n = 0; n < M[1].length; n++) {
+                    const g = M[1][n];
+                    e += (0 < n ? "," : "") + noteNames[(g + r) % 31], t += (0 < n ? "," : "") + g % 31, i += (0 < n ? "," : "") + (1 + a.indexOf(g % 31)), 2 == n && d && (e += ",x", t += ",x", i += ",x")
+                }
+                let n = [],
+                    o = "<li>",
+                    s = "</li>";
+                M[2] != u && c && n.push("" + M[2]), M[3] && (n.push("Harsh"), o = "<li><i>", s = "</i></li>"), 0 < n.length ? h += "" + o + M[0] + `: ${e} (${t} / ${i}) &lt;${n.join(", ")}&gt;` + s : h += "" + o + M[0] + `: ${e} (${t} / ${i})` + s
+            }
+            h += "</ul></li>"
+        }
+        return h
+    }
+
+    function analyze(e) {
+        const n = document.getElementById("scaleInput").value,
+            t = mod31(stringToNumbers(n)),
+            i = Number(document.getElementById("root").value),
+            P = {
+                Tonic: 7,
+                Subdominant: 4,
+                "Dominant (Strong)": 4,
+                Dominant: 4,
+                Mediant: 4
+            },
+            o = ["Invalid", "Dissonant", "Slightly dissonant", "Consonant"],
+            j = ["P1", "D2", "s2", "m2", "n2", "M2", "S2", "s3", "m3", "n3", "M3", "S3", "s4", "P4", "DD5", "sD5", "D5", "s5", "P5", "S5", "A5", "SA5", "AA5", "SAA5", "D7", "s7", "m7", "n7", "M7", "S7", "A7"],
+            s = e[1];
+        innerHTML = "", innerHTML += `<h3>${e[0]}</h3><ul>`;
+        let l = "",
+            a = "",
+            r = "",
+            u = "";
+        for (let n = 0; n < e[1].length; n++) {
+            const x = e[1][n];
+            l += (0 < n ? ", " : "") + noteNames[(x + i) % 31], a += (0 < n ? ", " : "") + (x + i) % 31, r += (0 < n ? ", " : "") + (1 + t.indexOf(x % 31)), u += (0 < n ? ", " : "") + j[(x - s[0] + 31) % 31]
+        }
+        innerHTML += `<li>Notes: <ul><li>Names: ${l}</li><li>Intervals: ${u}</li><li>Relative to tonic: ${a}</li><li>Numbered: ${r}</li></ul></li>`;
+        const m = classifyChord(e[1]);
+        innerHTML += `<li>Function: ${m}</li>`, P[m] > e[2] ? innerHTML += `<li>Consonance score: ${e[2]}/9 (${o[Math.ceil(e[2] / 3)]})<br><i>(This chord is rather dissonant for this function.)</i></li>` : innerHTML += `<li>Consonance score: ${e[2]}/9 (${o[Math.ceil(e[2] / 3)]})</li>`, innerHTML += "<li>Extensions:<ul>";
+        let c = !1,
+            d = !1,
+            h = !1,
+            M = !1,
+            g = [],
+            S = [];
+        if (s[2] <= 22 + s[0]) {
+            const N = getExtensions(s, t, g, Math.min(25 + s[0], s[2] + 7), Math.min(30 + s[0], Math.max(29 + s[0], s[2] + 11)), s[2] + 7, Math.min(30 + s[0], s[2] + 11), {
+                21: "sDD7",
+                22: "DD7",
+                23: "sD7",
+                24: "D7",
+                25: "s7",
+                26: "m7",
+                27: "n7",
+                28: "M7",
+                29: "S7",
+                30: "A7"
+            });
+            S = N.extensions, 0 < S.length && (d = c = !0)
+        }
+        innerHTML += outputExtensions(t, i, m, "Sevenths", S, !0, !1);
+        const $ = s[1] == 18 + s[0] ? s[2] - 18 : s[1],
+            f = 23 < s[2] - s[0] ? 18 + s[0] : s[2];
+        let p, D, T = [];
+        if (s[1] > 6 + s[0]) {
+            const b = getExtensions(s, t, g, Math.max(32 + s[0], Math.min(34 + s[0], f + 16)), Math.max(37 + s[0], f + 19), Math.max(32 + s[0], f + 16), Math.min(39 + s[0], f + 19), {
+                32: "D9",
+                33: "s9",
+                34: "m9",
+                35: "n9",
+                36: "M9",
+                37: "S9",
+                38: "A9",
+                39: "SA9",
+                40: "AA9",
+                41: "SAA9"
+            });
+            p = b.low || 36, D = b.high || 36, T = b.extensions, 0 < T.length && (h = d = c = !0)
+        } else p = D = s[1] + 31;
+        innerHTML += outputExtensions(t, i, m, "Ninths", T, !1, !1);
+        let y = [];
+        if (12 != s[1] && 13 != s[1] && d) {
+            const I = getExtensions(s, t, g, Math.max($ + 32, Math.min(25 + f, p + 7)), 29 + f, Math.max(s[0] + 41, $ + 34), Math.min(s[0] + 47, 29 + f, $ + 39), {
+                39: "sDD11",
+                40: "DD11",
+                41: "sD11",
+                42: "D11",
+                43: "s11",
+                44: "P11",
+                45: "S11",
+                46: "A11",
+                47: "SA11",
+                48: "AA11",
+                49: "SAA11",
+                50: "AAA11",
+                51: "SAAA11"
+            });
+            y = I.extensions, 0 < y.length && (M = h = c = !0)
+        }
+        innerHTML += outputExtensions(t, i, m, "Elevenths", y, !1, !0);
+        let A = [];
+        if (s[1] > 6 + s[0] && h) {
+            const v = getExtensions(s, t, g, Math.max(32 + f, Math.min(34 + f, p + 16)), Math.max(37 + f, D + 19), Math.max(32 + f, p + 16), Math.min(39 + f, D + 19), {
+                48: "DD13",
+                49: "sD13",
+                50: "D13",
+                51: "s13",
+                52: "m13",
+                53: "n13",
+                54: "M13",
+                55: "S13",
+                56: "A13",
+                57: "SA13",
+                58: "AA13",
+                59: "SAA13",
+                60: "AAA13"
+            });
+            A = v.extensions, 0 < A.length && (M = c = !0)
+        } else p = D = s[1] + 31;
+        innerHTML += outputExtensions(t, i, m, "Thirteenths", A, !1, !0), c || (innerHTML += "<li><i>No extensions found.</i></li>"), M && (innerHTML += "<i>Elevenths and thirteenths may be inaccurate. Test them before using them.</i>"), innerHTML += "</li>", innerHTML += "</ul>";
+        let L = [],
+            E = !1,
+            H = !1;
+        for (let n = 0; n < s.length; n++) {
+            const B = s[n];
+            t.includes((B + 1) % 31) && (L.push([B, (B + 1) % 31]), E = !0), t.includes((B + 30) % 31) && (L.push([B, (B + 30) % 31]), E = !0)
+        }
+        for (let n = 0; n < g.length; n++) {
+            const C = g[n];
+            t.includes((C + 1) % 31) && (L.push([C % 31, (C + 1) % 31]), H = !0), t.includes((C + 30) % 31) && (L.push([C % 31, (C + 30) % 31]), H = !0)
+        }
+        if (0 < L.length) {
+            innerHTML += "<li>Possible shimmers:<ul>";
+            let n = 0;
+            for (E && (innerHTML += "<li>Chord notes: <ul>"); n < L.length && s.includes(L[n][0] % 31); n++) {
+                const w = L[n];
+                innerHTML += `<li>${noteNames[(w[0] + i) % 31]} (${w[0]}) ↝ ${noteNames[(w[1] + i) % 31]} (${w[1]})</li>`
+            }
+            for (E && (innerHTML += "</ul></li>"), H && (innerHTML += "<li>Possible extension notes: <ul>"); n < L.length; n++) {
+                const O = L[n];
+                innerHTML += `<li>${noteNames[(O[0] + i) % 31]} (${O[0]}) ↝ ${noteNames[(O[1] + i) % 31]} (${O[1]})</li>`
+            }
+            H && (innerHTML += "</ul></li>"), innerHTML += "</ul></li>"
+        }
+        innerHTML += "</ul>", document.getElementById("analysis").innerHTML = innerHTML, document.getElementById("analysis").scrollIntoView()
+    }
+    const chords = [
+            ["DRsus2", [0, 5, 17], 3],
+            ["sus^2", [0, 6, 18], 4],
+            ["orwell", [0, 7, 14], 5],
+            ["sdim", [0, 7, 15], 5],
+            ["sinb5", [0, 7, 16], 2],
+            ["sind5", [0, 7, 17], 5],
+            ["sin", [0, 7, 18], 8],
+            ["hdim", [0, 8, 15], 6],
+            ["dim", [0, 8, 16], 6],
+            ["mind5", [0, 8, 17], 5],
+            ["min", [0, 8, 18], 9],
+            ["mint5", [0, 8, 19], 4],
+            ["neub5", [0, 9, 16], 2],
+            ["neud5", [0, 9, 17], 4],
+            ["neu", [0, 9, 18], 6],
+            ["majd5", [0, 10, 17], 4],
+            ["maj", [0, 10, 18], 9],
+            ["majt5", [0, 10, 19], 5],
+            ["aug", [0, 10, 20], 6],
+            ["augx5", [0, 10, 22], 3],
+            ["saj", [0, 11, 18], 7],
+            ["sajt5", [0, 11, 19], 5],
+            ["squares", [0, 11, 22], 5],
+            ["DRsus4", [0, 12, 17], 3],
+            ["susv4", [0, 12, 18], 4],
+            ["sus4", [0, 13, 18], 6],
+            ["s7$", [0, 7, 25], 6],
+            ["ms7$", [0, 8, 25], 1],
+            ["ns7$", [0, 9, 25], 1],
+            ["h7$", [0, 10, 25], 5],
+            ["Ss7$", [0, 11, 25], 2],
+            ["s7omit3", [0, 18, 25], 8],
+            ["sm7$", [0, 7, 26], 1],
+            ["m7$", [0, 8, 26], 4],
+            ["nm7$", [0, 9, 26], 2],
+            ["7$", [0, 10, 26], 3],
+            ["Sm7$", [0, 11, 26], 2],
+            ["m7omit3", [0, 18, 26], 5],
+            ["sn7$", [0, 7, 27], 2],
+            ["mn7$", [0, 8, 27], 1],
+            ["n7$", [0, 9, 27], 4],
+            ["Mn7$", [0, 10, 27], 2],
+            ["Sn7$", [0, 11, 27], 3],
+            ["n7omit3", [0, 18, 27], 7],
+            ["sM7$", [0, 7, 28], 2],
+            ["mM7$", [0, 8, 28], 1],
+            ["nM7$", [0, 9, 28], 1],
+            ["M7$", [0, 10, 28], 4],
+            ["SM7$", [0, 11, 28], 2],
+            ["M7omit3", [0, 18, 28], 6],
+            ["sS7$", [0, 7, 29], 1],
+            ["mS7$", [0, 8, 29], 1],
+            ["nS7$", [0, 9, 29], 1],
+            ["MS7$", [0, 10, 29], 1],
+            ["S7$", [0, 11, 29], 3],
+            ["S7omit3", [0, 18, 29], 3]
+        ],
+        scales = [
+            ["MOS Scales", []],
+            ["Meantone[7] Major", [0, 5, 10, 13, 18, 23, 28]],
+            ["Meantone[7] Minor", [0, 5, 8, 13, 18, 21, 26]],
+            ["Orwell[4] 0|3", [0, 10, 17, 24]],
+            ["Orwell[9] 8|0", [0, 4, 7, 11, 14, 18, 21, 25, 28]],
+            ["Squares[8] 3|4", [0, 2, 9, 11, 18, 20, 22, 29]],
+            ["Squares[11] 5|5", [0, 2, 7, 9, 11, 13, 18, 20, 22, 24, 29]],
+            ["Neutral[7] 6|0", [0, 5, 9, 14, 18, 23, 27]],
+            ["Neutral[7] 4|2", [0, 5, 9, 13, 18, 22, 27]],
+            ["Mothra[6] 4|1", [0, 6, 12, 18, 24, 25]],
+            ["Mothra[11] 3|7", [0, 1, 6, 7, 12, 13, 18, 19, 20, 25, 26]],
+            ["MODMOS Scales", []],
+            ["Meantone[7] Harmonic Minor", [0, 5, 8, 13, 18, 21, 28]],
+            ["Meantone[7] Melodic Minor", [0, 5, 8, 13, 18, 23, 28]],
+            ["Orwell[9] Graham Orwell", [0, 3, 7, 10, 14, 18, 21, 25, 28]],
+            ["Squares[8] Onydim", [0, 7, 9, 16, 18, 25, 27, 29]],
+            ["Squares[11] Squares Major", [0, 5, 10, 12, 14, 16, 18, 23, 25, 27, 29]],
+            ["Mothra[5] Supermajor Pentatonic", [0, 5, 11, 18, 24]],
+            ["Mothra[5] Subminor Pentatonic", [0, 7, 13, 18, 25]],
+            ["JI-Based Scales", []],
+            ["Harmonic Series Mode 8", [0, 5, 10, 14, 18, 22, 25, 28]],
+            ["4D Lydian", [0, 5, 12, 18, 23, 25, 30]],
+            ["4D s3 Subminor", [0, 5, 7, 13, 18, 20, 25]],
+            ["4D Phrygian", [0, 11, 13, 18, 24, 26, 29]],
+            ["4D S3 Supermajor", [0, 5, 11, 13, 18, 24, 29]],
+            ["5D Ionian", [0, 1, 5, 13, 14, 18, 27]],
+            ["5D Mixolydian", [0, 5, 9, 13, 14, 18, 26, 27]],
+            ["5D n7 Ionian", [0, 5, 9, 13, 18, 27]],
+            ["5D n7 Mixolydian", [0, 5, 9, 13, 18, 22, 26, 27]]
+        ],
+        noteNames = ["C", "Ct", "C#", "Db", "Dd", "D", "Dt", "D#", "Eb", "Ed", "E", "Et", "Fd", "F", "Ft", "F#", "Gb", "Gd", "G", "Gt", "G#", "Ab", "Ad", "A", "At", "A#", "Bb", "Bd", "B", "Bt", "Cd"],
+        noteIntervals = ["P1", "S1", "s2", "m2", "n2", "M2", "S2", "s3", "m3", "n3", "M3", "S3", "s4", "P4", "S4", "A4", "D5", "s5", "P5", "S5", "s6", "m6", "n6", "M6", "S6", "s7", "m7", "n7", "M7", "S7", "s8"];
+        window.onload = addNotes;
+    </script>
+</body>
+
+</html>
